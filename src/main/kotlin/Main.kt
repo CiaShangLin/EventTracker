@@ -39,7 +39,6 @@ class FlurryEvent(private val mGetBuilder: IGetBuilder<IBuilder>) : IEventTracke
     override fun appOpen() {
         mGetBuilder.getBuilder().putMap("HOME_PAGE","APP_OPEN").logEvent("System")
     }
-
 }
 
 class AnalyticsEvent(private val mGetBuilder: IGetBuilder<IBuilder>) : IEventTracker.Analytics {
