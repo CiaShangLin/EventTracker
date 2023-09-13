@@ -8,7 +8,7 @@ button.onClickListener{
         Flurry.agent().put(key,value).logEvent(log)
         多了GA
         Analytics.agent().put(key,value).logEvent(log)
-        }
+}
 ```
 這樣有幾個問題
 - 散落在各個地方，現在我多了一個GA就要找到每個地方去一增一行，如果以後又多一個要再一次會發瘋。
@@ -20,11 +20,11 @@ EventTracker可以透過新增event就可去呼叫到每一個埋點Library，�
 object EventTracker : IEventTracker.Flurry, IEventTracker.Analytics {
 private val events = arrayOf(FlurryEvent(Flurry()), AnalyticsEvent(Analytics()))
         override fun appOpen() {
-        events.forEach {
-        it.appOpen()
+            events.forEach {
+            it.appOpen()
         }
-        }
-        }
+    }
+}
 ```
 ### 介紹
 
@@ -50,8 +50,8 @@ interface IBuilder {
  * @property getBuilder 提供介面,實作的不寫死是因為測試會注入假的Builder
  */
 interface IGetBuilder<out T : IBuilder> {
-        fun getBuilder(): T
-        }
+    fun getBuilder(): T
+}
 ```
 
 ```java
@@ -73,9 +73,9 @@ sealed interface IEventTracker {
  */
 class FlurryEvent(private val mGetBuilder: IGetBuilder<IBuilder>) : IEventTracker.Flurry {
         override fun appOpen() {
-        mGetBuilder.getBuilder().putMap("HOME_PAGE","APP_OPEN").logEvent("System")
+            mGetBuilder.getBuilder().putMap("HOME_PAGE","APP_OPEN").logEvent("System")
         }
-        }
+}
 ```
 
 ```java
@@ -84,9 +84,9 @@ class FlurryEvent(private val mGetBuilder: IGetBuilder<IBuilder>) : IEventTracke
  */
 class AnalyticsEvent(private val mGetBuilder: IGetBuilder<IBuilder>) : IEventTracker.Analytics {
         override fun appOpen() {
-        mGetBuilder.getBuilder().putMap("HOME_PAGE","APP_OPEN").logEvent("System")
+            mGetBuilder.getBuilder().putMap("HOME_PAGE","APP_OPEN").logEvent("System")
         }
-        }
+}
 ```
 ```java
 /**
@@ -94,30 +94,30 @@ class AnalyticsEvent(private val mGetBuilder: IGetBuilder<IBuilder>) : IEventTra
  */
 class Flurry : IGetBuilder<Flurry.Builder> {
 
-        override fun getBuilder(): Builder = Builder()
+    override fun getBuilder(): Builder = Builder()
 
-class Builder : IBuilder {
-private val mParmaMap = mutableMapOf<String, String>()
-private var mLogEvent = ""
+    class Builder : IBuilder {
+        private val mParmaMap = mutableMapOf<String, String>()
+        private var mLogEvent = ""
 
         override fun getParmaMap(): Map<String, String> = mParmaMap
 
         override fun getLogEvent(): String = mLogEvent
 
         override fun putMap(key: String, value: String): IBuilder {
-        mParmaMap[key] = value
-        println("Flurry map = $key $value")
-        return this
+                mParmaMap[key] = value
+                println("Flurry map = $key $value")
+                return this
         }
 
         override fun logEvent(logEvent: String) {
-        mLogEvent = logEvent
-        //FlurryAgent.logEvent(logEvent, mParmaMap)
-        println("Flurry logEvent = $logEvent")
-        println("----------------------------")
+                mLogEvent = logEvent
+                //FlurryAgent.logEvent(logEvent, mParmaMap)
+                println("Flurry logEvent = $logEvent")
+                println("----------------------------")
         }
-        }
-        }
+    }
+}
 ```
 
 ```java
@@ -125,32 +125,32 @@ private var mLogEvent = ""
  * GA的操作封裝
  */
 class Analytics : IGetBuilder<Analytics.Builder> {
+    
+    override fun getBuilder(): Builder = Builder()
 
-        override fun getBuilder(): Builder = Builder()
-
-class Builder : IBuilder {
-private val mParmaMap = mutableMapOf<String, String>()
-private var mLogEvent = ""
+    class Builder : IBuilder {
+        private val mParmaMap = mutableMapOf<String, String>()
+        private var mLogEvent = ""
 
         override fun getParmaMap(): Map<String, String> = mParmaMap
 
         override fun getLogEvent(): String = mLogEvent
 
         override fun putMap(key: String, value: String): IBuilder {
-        //mBundle.putString(key, value)
-        mParmaMap[key] = value
-        println("Analytics bundle = $key $value")
-        return this
+             //mBundle.putString(key, value)
+             mParmaMap[key] = value
+             println("Analytics bundle = $key $value")
+             return this
         }
 
         override fun logEvent(logEvent: String) {
-        mLogEvent = logEvent
-        //mFirebaseAnalytics.logEvent(logEvent, mBundle)
-        println("Analytics logEvent = $logEvent")
-        println("----------------------------")
+              mLogEvent = logEvent
+              //mFirebaseAnalytics.logEvent(logEvent, mBundle)
+              println("Analytics logEvent = $logEvent")
+              println("----------------------------")
+            }
         }
-        }
-        }
+}
 ```
 
 ```java
@@ -160,11 +160,11 @@ private var mLogEvent = ""
 object EventTracker : IEventTracker.Flurry, IEventTracker.Analytics {
 private val events = arrayOf(FlurryEvent(Flurry()), AnalyticsEvent(Analytics()))
         override fun appOpen() {
-        events.forEach {
-        it.appOpen()
+            events.forEach {
+            it.appOpen()
         }
-        }
-        }
+    }
+}
 ```
 
 ### 測試
